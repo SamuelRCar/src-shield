@@ -1,6 +1,6 @@
 # Checklist Baseline — SRC Shield
 
-> **O "sistema padrão" em forma de checklist** (Seção 10 do guia). Copiar este arquivo para
+> **O "sistema padrão" em forma de checklist.** Copiar este arquivo para
 > cada projeto, preencher o cabeçalho e marcar item a item. **Nenhum item aberto = pode
 > publicar.** Revisar a cada release relevante e na rotina mensal.
 
@@ -69,4 +69,4 @@
 - [ ] E-commerce: pagamento **via provedor** (Stripe/Mercado Pago) — dado de cartão nunca tocado diretamente (PCI DSS)
 
 ---
-*16 controles do baseline (Seção 10 do guia) + validações objetivas. Versão 1.0 — 2026-07-02.*
+*16 controles do baseline + validações objetivas. Versão 1.0 — 2026-07-02.*

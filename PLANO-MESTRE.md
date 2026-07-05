@@ -1,7 +1,7 @@
 # SRC Shield — Plano Mestre
 
-> Sistema padronizado de segurança da SRC. Baseado no `Guia de Cibersegurança Cloud.pdf`
-> (OWASP Top 10:2025 + NIST CSF 2.0). Versão 1.0 — 2026-07-02.
+> Sistema padronizado de segurança da SRC. Base normativa: OWASP Top 10:2025 e NIST CSF 2.0.
+> Versão 1.0 — 2026-07-02.
 >
 > **Como usar este documento:** as Partes I–III dão a visão e a arquitetura; a Parte IV é o
 > plano de execução em 8 etapas — cada etapa é autossuficiente (objetivo, tarefas,
@@ -23,7 +23,7 @@ Um **baseline reutilizável** com 6 componentes, versionado em um repositório-m
 5. **Pipeline CI reutilizável** — GitHub Actions que barram automaticamente segredo vazado, código inseguro e dependência vulnerável em todo push.
 6. **Operação** — monitoramento (Sentry + alertas), playbook de resposta a incidentes, procedimento de backup/restore e receitas de borda por hospedagem.
 
-### 1.2 O que o SRC Shield NÃO é (Seção 08 do guia — expectativas)
+### 1.2 O que o SRC Shield NÃO é (expectativas)
 
 - **Não é** um firewall/WAF ao vivo bloqueando atacantes — isso é papel da borda gerenciada (Cloudflare/Vercel), que o kit configura.
 - **Não substitui** serviços gerenciados (WAF, provedor de auth, banco gerenciado) — ele os integra corretamente.
@@ -114,7 +114,7 @@ Se um projeto só puder ter o mínimo, é isto — nesta ordem:
 ## PARTE IV — Plano de execução em 8 etapas
 
 > Cada etapa termina com validação objetiva. **Não avançar sem validar.**
-> Os prompts são para usar com o Claude Code na sessão da etapa (adaptados da Seção 09 do guia).
+> Os prompts são para usar com o Claude Code na sessão da etapa (um por fase).
 
 ### ETAPA 0 — Fundação e governança ✅ (esta sessão)
 
