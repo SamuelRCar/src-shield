@@ -30,9 +30,9 @@ Baseado em **OWASP Top 10:2025** e organizado pelo **NIST CSF 2.0**.
 | 2 — Pacote `@src/shield` | headers, rateLimit, validate, authz, logger, csrf, errors | ✅ 31 testes — verdes também no Actions |
 | 3 — Repo-modelo Next.js | [templates/next-hardened](templates/next-hardened/) | 🔨 construído — 10 testes de segurança ✅ (local e Actions), build ✅, headers verificados ao vivo ✅; nota A em securityheaders.com valida no 1º deploy |
 | 4 — Borda e dados | [receitas/](receitas/) Vercel · Netlify · Cloudflare · banco · config | 🔨 escritas — validação ao vivo no 1º deploy (cada receita tem a tabela "Como verificar") |
-| 5 — Monitoramento | logger + Sentry + alertas | ⬜ |
-| 6 — Resposta/recuperação | playbook preenchido + restore testado | ⬜ |
-| 7 — Manutenção + piloto | rotina ativa + piloto casaconta-app | ⬜ |
+| 5 — Monitoramento | [operacao/alertas.md](operacao/alertas.md) — logger + Sentry + 5 alertas | 🔨 logs estruturados ✅ (verificados no piloto); Sentry aguarda DSN |
+| 6 — Resposta/recuperação | playbook preenchido no piloto | 🔨 playbook do CasaConta preenchido ✅; restore testável ao ligar o Supabase |
+| 7 — Manutenção + piloto | [PILOTO-CASACONTA.md](PILOTO-CASACONTA.md) | ✅ 2026-07-05 — kit aplicado ao casaconta-app, 4 achados reais corrigidos e validados ao vivo |
 
 ## Uso rápido (projeto consumidor)
 
