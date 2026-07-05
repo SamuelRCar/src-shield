@@ -1,0 +1,19 @@
+# Harness do Teste de Fogo (Etapa 1) — dispara o pipeline reutilizável.
+# Vive apenas no branch teste-de-fogo; é removido junto com o branch após validar.
+name: CI Test
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [teste-de-fogo]
+
+permissions:
+  contents: read
+
+jobs:
+  shield:
+    uses: ./.github/workflows/security.yml
+    with:
+      run-npm: false
+      run-pip: false
