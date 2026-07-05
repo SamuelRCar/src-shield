@@ -1,0 +1,14 @@
+# Config do gitleaks para o src-shield — estende as regras padrão.
+[extend]
+useDefault = true
+
+# As duas strings abaixo são as credenciais de EXEMPLO da documentação oficial
+# da AWS (constantes públicas, nunca reais). Elas aparecem no histórico do
+# docs/ci.md e disparariam a varredura de histórico completo para sempre.
+# Testes de fogo NÃO devem usar estas strings — ver docs/ci.md §4.
+[allowlist]
+description = "Constantes públicas de exemplo da documentação AWS"
+regexes = [
+  '''AKIAIOSFODNN7EXAMPLE''',
+  '''wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY''',
+]

@@ -26,9 +26,9 @@ Baseado em **OWASP Top 10:2025** e organizado pelo **NIST CSF 2.0**.
 | Etapa | Entrega | Status |
 |---|---|---|
 | 0 — Fundação e governança | Docs desta pasta | ✅ 2026-07-02 |
-| 1 — Pipeline CI | `security.yml` + Dependabot + docs | 🔨 construído — falta push no GitHub + teste de fogo |
-| 2 — Pacote `@src/shield` | headers, rateLimit, validate, authz, logger, csrf, errors | 🔨 construído — 31 testes ✅ |
-| 3 — Repo-modelo Next.js | [templates/next-hardened](templates/next-hardened/) | 🔨 construído — 10 testes de segurança ✅, build ✅, headers verificados ao vivo ✅; nota A em securityheaders.com valida no 1º deploy |
+| 1 — Pipeline CI | `security.yml` + Dependabot + docs | ✅ 2026-07-04 — teste de fogo aprovado (gitleaks+Semgrep vermelhos no PR); 2 achados corrigidos (ver docs/ci.md §4) |
+| 2 — Pacote `@src/shield` | headers, rateLimit, validate, authz, logger, csrf, errors | ✅ 31 testes — verdes também no Actions |
+| 3 — Repo-modelo Next.js | [templates/next-hardened](templates/next-hardened/) | 🔨 construído — 10 testes de segurança ✅ (local e Actions), build ✅, headers verificados ao vivo ✅; nota A em securityheaders.com valida no 1º deploy |
 | 4 — Borda e dados | [receitas/](receitas/) Vercel · Netlify · Cloudflare · banco · config | 🔨 escritas — validação ao vivo no 1º deploy (cada receita tem a tabela "Como verificar") |
 | 5 — Monitoramento | logger + Sentry + alertas | ⬜ |
 | 6 — Resposta/recuperação | playbook preenchido + restore testado | ⬜ |
