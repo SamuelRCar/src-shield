@@ -40,10 +40,10 @@ on:
         description: "Regras Semgrep, separadas por espaço"
         type: string
         default: "p/owasp-top-ten p/secrets"
-    secrets:
-      GITLEAKS_LICENSE:
-        description: "Necessária apenas para contas de organização no GitHub"
-        required: false
+      dependency-review:
+        description: "Rodar dependency-review em PRs (exige repo público ou GitHub Advanced Security)"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -57,10 +57,15 @@ jobs:
         with:
           # Histórico completo: segredo commitado e depois "apagado" continua sendo achado
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      # CLI pinado varrendo TODO o histórico em qualquer evento.
+      # (Achado do teste de fogo: a gitleaks-action v2 calcula o intervalo pelo
+      # payload do evento e pulava o primeiro push de um branch novo.)
+      # Config extra (allowlist) em .gitleaks.toml na raiz do repo, se existir.
+      - name: Gitleaks — varredura do histórico completo
+        run: >
+          docker run --rm -v "$PWD:/repo"
+          ghcr.io/gitleaks/gitleaks:v8.18.4
+          detect --source /repo --redact --exit-code 1
 
   sast:
     name: SAST (Semgrep)
@@ -112,7 +117,9 @@ jobs:
 
   dependency-review:
     name: Revisão de dependências (PRs)
-    if: ${{ github.event_name == 'pull_request' }}
+    # Achado do teste de fogo: em repo PRIVADO sem GitHub Advanced Security este
+    # job sempre falha — desligar via input até o repo ser público ou ter GHAS
+    if: ${{ github.event_name == 'pull_request' && inputs.dependency-review }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

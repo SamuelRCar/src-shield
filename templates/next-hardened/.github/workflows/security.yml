@@ -16,6 +16,9 @@ jobs:
     with:
       run-npm: true
       run-pip: false
+      # projetos de cliente costumam ser privados sem GHAS — mudar para true
+      # quando o repo for público ou tiver GitHub Advanced Security
+      dependency-review: false
     secrets: inherit
 
   testes:

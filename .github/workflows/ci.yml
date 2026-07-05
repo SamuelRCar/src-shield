@@ -18,6 +18,8 @@ jobs:
       run-npm: true
       run-pip: false
       working-directory: packages/shield
+      # repo privado sem GHAS — religar quando for público ou tiver Advanced Security
+      dependency-review: false
     secrets: inherit
 
   test-shield:
