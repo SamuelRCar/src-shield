@@ -1,0 +1,106 @@
+name: SRC Shield – Security Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      run-npm:
+        description: 'Habilita npm audit'
+        type: boolean
+        default: true
+      run-pip:
+        description: 'Habilita pip-audit'
+        type: boolean
+        default: false
+      working-directory:
+        description: 'Diretório de trabalho (monorepos)'
+        type: string
+        default: '.'
+      audit-level:
+        description: 'Severidade mínima que reprova o npm audit'
+        type: string
+        default: 'high'
+      pip-requirements:
+        description: 'Caminho do requirements.txt'
+        type: string
+        default: 'requirements.txt'
+      semgrep-rules:
+        description: 'Rulesets do Semgrep'
+        type: string
+        default: 'p/owasp-top-ten p/secrets'
+    secrets:
+      GITLEAKS_LICENSE:
+        description: 'Licença gitleaks (somente para repos de organização)'
+        required: false
+
+jobs:
+  secrets:
+    name: Segredos (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks – varredura de segredos
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  dependencies-node:
+    name: Dependências Node
+    if: ${{ inputs.run-npm }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: '${{ inputs.working-directory }}/package-lock.json'
+      - name: Instalar dependências
+        run: npm ci --prefer-offline
+      - name: npm audit
+        run: npm audit --audit-level=${{ inputs.audit-level }}
+
+  dependencies-python:
+    name: Dependências Python
+    if: ${{ inputs.run-pip }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Instalar pip-audit
+        run: pip install pip-audit
+      - name: pip-audit
+        run: pip-audit -r ${{ inputs.pip-requirements }}
+
+  sast:
+    name: SAST (Semgrep)
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semgrep scan
+        run: semgrep scan --error ${{ inputs.semgrep-rules }} ${{ inputs.working-directory }}
+
+  dependency-review:
+    name: Revisão de dependências
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: ${{ inputs.audit-level }}
