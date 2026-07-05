@@ -88,7 +88,6 @@ bash ../src-shield/scripts/instalar.sh        # Windows: powershell -File ..\src
 | [`operacao/`](operacao/) | Playbook de incidentes, alertas, rotina mensal | operação |
 | [`docs/ci.md`](docs/ci.md) | Referência completa do pipeline e parâmetros | quem adota |
 | [`PLANO-MESTRE.md`](PLANO-MESTRE.md) | O plano completo (8 etapas, OWASP/NIST, matriz de ataques) | referência |
-| [`PILOTO-CASACONTA.md`](PILOTO-CASACONTA.md) | Caso real: o kit aplicado a um app, com 4 falhas corrigidas | exemplo |
 
 ---
 

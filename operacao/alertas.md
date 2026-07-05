@@ -14,7 +14,7 @@ registra, no mínimo:
 - **Rate limit**: disparo (nível `security`)
 - **Erros**: qualquer erro não tratado, com `id` de correlação (nunca PII em texto puro)
 
-No CasaConta: `src/lib/security.ts` → `log.security(...)` / `log.error(...)`.
+No app: `src/lib/security.ts` → `log.security(...)` / `log.error(...)`.
 
 ## 2. Sentry (alertas de erro)
 
@@ -54,6 +54,5 @@ Cada um precisa chegar a uma pessoa (e-mail/celular), não só ficar no log:
 ## 5. Validação (teste de fogo da Etapa 5)
 
 Provocar um erro de teste em produção/staging e confirmar que o alerta **chega**
-em minutos. No CasaConta (mock, sem Sentry ainda): confirmar que o `log.error`
-aparece nos logs da Vercel com o `id` de correlação — feito localmente em
-2026-07-05 (validação ao vivo: erro de validação e rate limit gerando linha JSON).
+em minutos. Sem Sentry ainda: confirmar que o `log.error` aparece nos logs da
+hospedagem (ex.: Vercel Logs) com o `id` de correlação.

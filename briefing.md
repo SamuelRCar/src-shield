@@ -18,7 +18,7 @@ O sistema **não é um software-escudo único** instalável. É um **kit padroni
 | Nome do sistema | **SRC Shield** (repositório `src-shield`, pacote `@src/shield`) |
 | Esqueleto organizacional | NIST CSF 2.0 — as 6 funções |
 | Stack alvo | Next.js/React · Node · Python · SQL · Vercel/Netlify · Cloudflare |
-| Piloto | `casaconta-app` (Next.js + Supabase) na Etapa 7 |
+| Piloto | um projeto real da SRC na Etapa 7 |
 
 ## Restrições e notas
 

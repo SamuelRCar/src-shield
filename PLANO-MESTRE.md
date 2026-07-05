@@ -217,10 +217,10 @@ Se um projeto só puder ter o mínimo, é isto — nesta ordem:
 - **Objetivo:** segurança é processo, não projeto de uma vez. NIST: Governar. Também cobre o fator humano (AT-06).
 - **Tarefas:**
   1. Ativar a `operacao/rotina-mensal.md` como prática (agendável via `/schedule` ou lembrete recorrente).
-  2. **Piloto:** aplicar o kit completo ao `casaconta-app` (Next.js + Supabase — candidato ideal): rodar o processo da Parte V para projeto existente, medir o esforço e registrar os ajustes necessários no kit.
+  2. **Piloto:** aplicar o kit completo a um projeto real (Next.js + banco gerenciado): rodar o processo da Parte V para projeto existente, medir o esforço e registrar os ajustes necessários no kit.
   3. Revisar o kit com as lições do piloto → publicar `v1.0` do SRC Shield.
   4. Definir versionamento do kit (tags `v1.x`) e processo de atualização dos projetos que o consomem.
-- **Validação:** `casaconta-app` passa 100% do `checklist-baseline.md`; rotina mensal executada pela primeira vez e registrada.
+- **Validação:** o projeto piloto passa 100% do `checklist-baseline.md`; rotina mensal executada pela primeira vez e registrada.
 
 ### Roadmap e dependências
 

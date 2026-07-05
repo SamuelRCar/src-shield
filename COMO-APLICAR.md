@@ -90,9 +90,6 @@ Depois faça a **Parte 1** para ligar o CI. Detalhes no
 5. **Configure a borda** conforme a sua hospedagem em [`receitas/`](receitas/).
 6. **Entre na rotina mensal** ([`operacao/rotina-mensal.md`](operacao/rotina-mensal.md)).
 
-> Exemplo real de projeto existente reforçado (4 falhas encontradas e corrigidas):
-> [`PILOTO-CASACONTA.md`](PILOTO-CASACONTA.md).
-
 ---
 
 ## Parte 4 — Usar os controles de código (apps Node/Next)
@@ -103,7 +100,7 @@ rate limit, validação, autorização, logger, CSRF, erros).
 - **Publicado no npm** (recomendado): `npm install @src/shield` e
   `import { ... } from "@src/shield"`. Sem autenticação. Como publicar: [docs/publicar.md](docs/publicar.md).
 - **Enquanto não publicado — vendorizar**: copiar o que usa para `src/lib/security.ts`
-  do seu projeto (veja como no [piloto](PILOTO-CASACONTA.md)). Simples e deployável.
+  do seu projeto. Simples e deployável.
 
 Uso de cada módulo: [README do pacote](packages/shield/README.md).
 
