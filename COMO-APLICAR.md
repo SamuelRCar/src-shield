@@ -98,13 +98,12 @@ Depois faça a **Parte 1** para ligar o CI. Detalhes no
 ## Parte 4 — Usar os controles de código (apps Node/Next)
 
 O pacote [`@src/shield`](packages/shield/) traz os controles prontos (cabeçalhos,
-rate limit, validação, autorização, logger, CSRF, erros). Enquanto ele não estiver
-publicado num registry, há dois caminhos:
+rate limit, validação, autorização, logger, CSRF, erros).
 
-- **Vendorizar**: copiar o que usa para `src/lib/security.ts` do seu projeto (veja como
-  no piloto). Simples e deployável.
-- **Publicar** (recomendado a médio prazo): publicar `@src/shield` no GitHub Packages e
-  instalar como dependência normal.
+- **Publicado no npm** (recomendado): `npm install @src/shield` e
+  `import { ... } from "@src/shield"`. Sem autenticação. Como publicar: [docs/publicar.md](docs/publicar.md).
+- **Enquanto não publicado — vendorizar**: copiar o que usa para `src/lib/security.ts`
+  do seu projeto (veja como no [piloto](PILOTO-CASACONTA.md)). Simples e deployável.
 
 Uso de cada módulo: [README do pacote](packages/shield/README.md).
 

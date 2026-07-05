@@ -1,0 +1,40 @@
+# Publica o pacote @src/shield no npm público.
+# NÃO roda sozinho: você dispara em Actions → "Publicar @src/shield" → Run workflow
+# (ou criando uma tag shield-vX.Y.Z). Exige o secret NPM_TOKEN no repositório.
+# Passo a passo: docs/publicar.md
+name: Publicar @src/shield
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "shield-v*"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/shield
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+          cache: npm
+          cache-dependency-path: packages/shield/package-lock.json
+
+      - run: npm ci
+      # Não publica pacote quebrado: build + testes precisam passar antes
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+      - name: Publicar no npm (público)
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -2,9 +2,20 @@
   "name": "@src/shield",
   "version": "0.1.0",
   "description": "Controles de segurança padronizados da SRC (SRC Shield) — headers, rate limit, validação, autorização, logger seguro, CSRF e tratamento de erros",
-  "private": true,
   "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "security",
+    "owasp",
+    "nextjs",
+    "rate-limit",
+    "csp",
+    "validation",
+    "src-shield"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -21,7 +32,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "engines": {
     "node": ">=20"
