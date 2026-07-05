@@ -1,55 +1,47 @@
-# SRC Shield 🛡️
+# SRC Shield
 
-Pipeline de segurança reutilizável para todos os projetos SRC. Etapa 1 do PLANO-MESTRE.
+**Sistema padronizado de segurança da SRC** — um baseline reutilizável aplicado a todo
+projeto (sites, SaaS, e-commerce) para proteger contra ataques e roubo de dados.
+Baseado em **OWASP Top 10:2025** e organizado pelo **NIST CSF 2.0**.
 
-## O que faz
+> Não é um "software-escudo" que roda na frente dos sites: é o conjunto de regras,
+> código compartilhado, pipeline e playbooks que faz cada projeto nascer e permanecer
+> seguro — com a proteção ao vivo vinda da borda gerenciada (WAF/CDN) que ele configura.
 
-| Job | Ferramenta | Finalidade |
+## Estrutura
+
+| Pasta/arquivo | O que é |
+|---|---|
+| [PLANO-MESTRE.md](PLANO-MESTRE.md) | O plano completo: visão, arquitetura, 8 etapas, matriz de ataques |
+| [governanca/SEGURANCA.md](governanca/SEGURANCA.md) | Regras de segurança (copiar em todo projeto) |
+| [governanca/checklist-baseline.md](governanca/checklist-baseline.md) | Os 16 controles do baseline, com validação |
+| [operacao/playbook-incidentes.md](operacao/playbook-incidentes.md) | Resposta a incidentes (template por projeto) |
+| [operacao/rotina-mensal.md](operacao/rotina-mensal.md) | Rotina mensal de manutenção |
+| [.github/workflows/security.yml](.github/workflows/security.yml) | **Pipeline reutilizável**: gitleaks + Semgrep + npm/pip audit + dependency-review |
+| [docs/ci.md](docs/ci.md) | Como ligar o pipeline num projeto + teste de fogo |
+| [templates/dependabot.yml](templates/dependabot.yml) | Dependabot modelo para projetos |
+
+## Status das etapas
+
+| Etapa | Entrega | Status |
 |---|---|---|
-| Segredos | gitleaks | Detecta chaves, tokens e senhas no histórico git |
-| Dependências Node | npm audit | CVEs em pacotes npm |
-| Dependências Python | pip-audit | CVEs em pacotes pip |
-| SAST | Semgrep | Análise estática (OWASP Top 10 + secrets) |
-| Revisão de dependências | dependency-review | Bloqueia PRs com dependências vulneráveis |
+| 0 — Fundação e governança | Docs desta pasta | ✅ 2026-07-02 |
+| 1 — Pipeline CI | `security.yml` + Dependabot + docs | 🔨 construído — falta push no GitHub + teste de fogo |
+| 2 — Pacote `@src/shield` | headers, rateLimit, validate, authz, logger, csrf, errors | 🔨 construído — 31 testes ✅ |
+| 3 — Repo-modelo Next.js | [templates/next-hardened](templates/next-hardened/) | 🔨 construído — 10 testes de segurança ✅, build ✅, headers verificados ao vivo ✅; nota A em securityheaders.com valida no 1º deploy |
+| 4 — Borda e dados | [receitas/](receitas/) Vercel · Netlify · Cloudflare · banco · config | 🔨 escritas — validação ao vivo no 1º deploy (cada receita tem a tabela "Como verificar") |
+| 5 — Monitoramento | logger + Sentry + alertas | ⬜ |
+| 6 — Resposta/recuperação | playbook preenchido + restore testado | ⬜ |
+| 7 — Manutenção + piloto | rotina ativa + piloto casaconta-app | ⬜ |
 
-## Como usar em um projeto
-
-### 1. Workflow (`.github/workflows/security.yml`)
+## Uso rápido (projeto consumidor)
 
 ```yaml
-name: Segurança
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-permissions:
-  contents: read
-
 jobs:
   shield:
     uses: SamuelRCar/src-shield/.github/workflows/security.yml@v1
-    with:
-      run-npm: true
-      run-pip: false
+    with: { run-npm: true }
     secrets: inherit
 ```
 
-### 2. Dependabot (`.github/dependabot.yml`)
-
-Copie `templates/dependabot.yml` deste repo e remova os ecossistemas que o projeto não usa.
-
-## Parâmetros
-
-| Input | Padrão | Para quê |
-|---|---|---|
-| `run-npm` | `true` | Liga/desliga npm audit |
-| `run-pip` | `false` | Liga/desliga pip-audit |
-| `working-directory` | `.` | Pasta do app em monorepos |
-| `audit-level` | `high` | Severidade que reprova o build |
-| `pip-requirements` | `requirements.txt` | Caminho do requirements |
-| `semgrep-rules` | `p/owasp-top-ten p/secrets` | Regras SAST |
-
-## Teste de fogo
-
-Ver `ci.md` — o pipeline só é entregue quando falhar nos dois testes de segurança.
+Ver [docs/ci.md](docs/ci.md).

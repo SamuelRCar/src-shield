@@ -1,0 +1,18 @@
+# Segredos — nunca versionar (regra 1 do SEGURANCA.md)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Next / Node
+node_modules/
+.next/
+out/
+coverage/
+next-env.d.ts
+*.tsbuildinfo
+
+# SO / editor
+.DS_Store
+Thumbs.db

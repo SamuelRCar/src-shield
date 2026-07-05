@@ -1,0 +1,65 @@
+# CI do próprio repositório src-shield: aplica o workflow de segurança em si mesmo
+# (dogfooding) e roda os testes do pacote @src/shield.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    uses: ./.github/workflows/security.yml
+    with:
+      run-npm: true
+      run-pip: false
+      working-directory: packages/shield
+    secrets: inherit
+
+  test-shield:
+    name: Testes @src/shield
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/shield
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: packages/shield/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  test-template:
+    name: Template next-hardened
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: templates/next-hardened/package-lock.json
+      # o template consome @src/shield via file: — construir o pacote primeiro
+      - run: npm ci
+        working-directory: packages/shield
+      - run: npm run build
+        working-directory: packages/shield
+      - run: npm ci
+        working-directory: templates/next-hardened
+      - run: npx prisma generate
+        working-directory: templates/next-hardened
+      - run: npm run typecheck
+        working-directory: templates/next-hardened
+      - run: npm test
+        working-directory: templates/next-hardened
+      - run: npm audit --audit-level=high
+        working-directory: templates/next-hardened

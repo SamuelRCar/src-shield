@@ -1,0 +1,36 @@
+// Schema do template SRC Shield.
+// Migrações rodam com papel elevado; a aplicação usa app_user (privilégio mínimo) — README §Banco.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("member")
+  // MFA (TOTP) — opcional por usuário; obrigatório para admins (checklist item 2)
+  mfaSecret    String?
+  mfaEnabled   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  notes        Note[]
+}
+
+// Recurso de exemplo — troque por entidades do projeto, mantendo SEMPRE o ownerId
+// e a checagem requireOwner em cada acesso (A01).
+model Note {
+  id        String   @id @default(cuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([ownerId])
+}

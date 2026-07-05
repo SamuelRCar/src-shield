@@ -1,0 +1,32 @@
+# Pipeline de segurança do SRC Shield (ativa quando este template vira um repo próprio).
+# Docs: https://github.com/SamuelRCar/src-shield/blob/main/docs/ci.md
+name: Segurança
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  shield:
+    uses: SamuelRCar/src-shield/.github/workflows/security.yml@v1
+    with:
+      run-npm: true
+      run-pip: false
+    secrets: inherit
+
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run typecheck
+      - run: npm test
