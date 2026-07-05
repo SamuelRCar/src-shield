@@ -1,0 +1,19 @@
+# Segredos — nunca versionar (regra 1 do SEGURANCA.md)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Node (etapas futuras)
+node_modules/
+dist/
+coverage/
+
+# Python
+__pycache__/
+.venv/
+
+# SO / editor
+.DS_Store
+Thumbs.db

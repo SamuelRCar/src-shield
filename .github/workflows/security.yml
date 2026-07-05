@@ -1,88 +1,66 @@
-name: SRC Shield – Security Pipeline
+# SRC Shield — Workflow reutilizável de segurança (Etapa 1 do PLANO-MESTRE.md)
+#
+# Consumido pelos projetos da SRC via:
+#   uses: SamuelRCar/src-shield/.github/workflows/security.yml@v1
+# Ver docs/ci.md para instruções completas de uso e o "teste de fogo".
+#
+# Jobs:
+#   gitleaks           — segredos vazados no código e no histórico (AT-07 / regra geral 1)
+#   sast (Semgrep)     — padrões inseguros no código (A05, A01, regras OWASP)
+#   sca-npm            — dependências Node com CVE conhecida (A03)
+#   sca-pip            — dependências Python com CVE conhecida (A03)
+#   dependency-review  — bloqueia PR que introduz dependência vulnerável (A03/A08)
+
+name: SRC Shield Security
 
 on:
   workflow_call:
     inputs:
       run-npm:
-        description: 'Habilita npm audit'
+        description: "Rodar npm audit (projetos Node)"
         type: boolean
         default: true
       run-pip:
-        description: 'Habilita pip-audit'
+        description: "Rodar pip-audit (projetos Python)"
         type: boolean
         default: false
       working-directory:
-        description: 'Diretório de trabalho (monorepos)'
+        description: "Pasta do app dentro do repo (monorepos)"
         type: string
-        default: '.'
+        default: "."
       audit-level:
-        description: 'Severidade mínima que reprova o npm audit'
+        description: "Severidade mínima que reprova o npm audit (low|moderate|high|critical)"
         type: string
-        default: 'high'
+        default: "high"
       pip-requirements:
-        description: 'Caminho do requirements.txt'
+        description: "Caminho do requirements.txt (relativo a working-directory)"
         type: string
-        default: 'requirements.txt'
+        default: "requirements.txt"
       semgrep-rules:
-        description: 'Rulesets do Semgrep'
+        description: "Regras Semgrep, separadas por espaço"
         type: string
-        default: 'p/owasp-top-ten p/secrets'
+        default: "p/owasp-top-ten p/secrets"
     secrets:
       GITLEAKS_LICENSE:
-        description: 'Licença gitleaks (somente para repos de organização)'
+        description: "Necessária apenas para contas de organização no GitHub"
         required: false
 
+permissions:
+  contents: read
+
 jobs:
-  secrets:
+  gitleaks:
     name: Segredos (gitleaks)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          # Histórico completo: segredo commitado e depois "apagado" continua sendo achado
           fetch-depth: 0
-      - name: Gitleaks – varredura de segredos
-        uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-
-  dependencies-node:
-    name: Dependências Node
-    if: ${{ inputs.run-npm }}
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ inputs.working-directory }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
-          cache-dependency-path: '${{ inputs.working-directory }}/package-lock.json'
-      - name: Instalar dependências
-        run: npm ci --prefer-offline
-      - name: npm audit
-        run: npm audit --audit-level=${{ inputs.audit-level }}
-
-  dependencies-python:
-    name: Dependências Python
-    if: ${{ inputs.run-pip }}
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ inputs.working-directory }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - name: Instalar pip-audit
-        run: pip install pip-audit
-      - name: pip-audit
-        run: pip-audit -r ${{ inputs.pip-requirements }}
 
   sast:
     name: SAST (Semgrep)
@@ -92,15 +70,52 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Semgrep scan
-        run: semgrep scan --error ${{ inputs.semgrep-rules }} ${{ inputs.working-directory }}
+        run: |
+          set -e
+          CONFIGS=""
+          for r in ${{ inputs.semgrep-rules }}; do
+            CONFIGS="$CONFIGS --config $r"
+          done
+          semgrep scan --error --metrics=off $CONFIGS
+
+  sca-npm:
+    name: Dependências Node (npm audit)
+    if: ${{ inputs.run-npm }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: npm audit (falha em ${{ inputs.audit-level }}+)
+        run: npm audit --audit-level=${{ inputs.audit-level }}
+
+  sca-pip:
+    name: Dependências Python (pip-audit)
+    if: ${{ inputs.run-pip }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: pip-audit (falha em qualquer CVE conhecida)
+        run: |
+          python -m pip install --quiet pip-audit
+          pip-audit -r ${{ inputs.pip-requirements }}
 
   dependency-review:
-    name: Revisão de dependências
-    if: github.event_name == 'pull_request'
+    name: Revisão de dependências (PRs)
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
+      - uses: actions/dependency-review-action@v4
         with:
-          fail-on-severity: ${{ inputs.audit-level }}
+          fail-on-severity: high
