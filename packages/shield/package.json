@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Controles de segurança padronizados da SRC (SRC Shield) — headers, rate limit, validação, autorização, logger seguro, CSRF e tratamento de erros",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

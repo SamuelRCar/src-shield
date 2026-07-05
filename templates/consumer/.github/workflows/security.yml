@@ -1,0 +1,25 @@
+# SRC Shield — pipeline de segurança do projeto.
+# Copie este arquivo para .github/workflows/security.yml no seu repositório.
+# O que ele faz: em cada push/PR, procura segredos vazados (gitleaks),
+# padrões inseguros no código (Semgrep) e dependências vulneráveis (npm/pip audit).
+# Docs: https://github.com/SamuelRCar/src-shield/blob/main/docs/ci.md
+name: Segurança
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  shield:
+    uses: SamuelRCar/src-shield/.github/workflows/security.yml@v1
+    with:
+      run-npm: true # projeto Node? mantenha true. Sem package.json → false
+      run-pip: false # projeto Python? → true
+      # working-directory: "apps/web"   # em monorepo, a pasta do app
+      # semgrep-rules: "p/owasp-top-ten p/secrets p/react"
+      # dependency-review: true         # false se o repo for PRIVADO sem GitHub Advanced Security
+    secrets: inherit

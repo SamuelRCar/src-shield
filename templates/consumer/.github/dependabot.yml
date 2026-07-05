@@ -1,0 +1,29 @@
+# SRC Shield — atualização automática de dependências.
+# Copie para .github/dependabot.yml e remova os ecossistemas que não usa
+# (senão o Dependabot registra erro de manifest ausente).
+version: 2
+updates:
+  # Actions dos workflows (sempre manter)
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Node — remova se não houver package.json
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      npm-minor-patch:
+        update-types: ["minor", "patch"]
+
+  # Python — remova se não houver requirements.txt/pyproject.toml
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
